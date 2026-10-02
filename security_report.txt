@@ -1,0 +1,101 @@
+WEEK 5 - SECURITY ENHANCEMENT REPORT
+
+Project: Secure Login System
+Language: Python
+Database: SQLite
+
+1. INTRODUCTION
+
+This project focuses on improving the security of a Python login application. The original application used SQLite database queries to verify usernames and passwords. The main security concern was the use of direct string concatenation when constructing the SQL query.
+
+2. SECURITY VULNERABILITY IDENTIFIED
+
+The original code constructed the SQL query by directly combining user input with the SQL statement.
+
+This could make the application vulnerable to SQL injection because specially crafted input could modify the intended SQL query.
+
+3. SECURITY FIX
+
+The application was modified to use a parameterized SQL query.
+
+The secure approach uses placeholders (?) and passes user input separately:
+
+cursor.execute(
+    "SELECT * FROM users WHERE username = ? AND password = ?",
+    (username, password)
+)
+
+This prevents user input from being interpreted as part of the SQL command.
+
+4. DATABASE SETUP
+
+A SQLite database named users.db was created.
+
+The database contains a users table with username and password fields.
+
+A test user was created:
+
+Username: admin
+Password: admin123
+
+5. SECURITY TESTING
+
+Test 1:
+Username: admin
+Password: admin123
+Result: Login successful
+Status: PASS
+
+Test 2:
+Username: admin
+Password: wrong123
+Result: Invalid username or password
+Status: PASS
+
+Test 3:
+Username: testuser
+Password: admin123
+Result: Invalid username or password
+Status: PASS
+
+6. SQL INJECTION TEST
+
+An SQL injection-style username was tested:
+
+' OR '1'='1
+
+The application returned:
+
+Invalid username or password
+
+This demonstrates that the parameterized query prevented the input from changing the SQL query logic.
+
+7. ERROR HANDLING
+
+Invalid login attempts do not expose database information or technical error details to the user. The application displays a simple message:
+
+Invalid username or password
+
+8. SECURITY IMPROVEMENTS
+
+The following security improvements were implemented:
+
+- Parameterized SQL queries
+- Input-based authentication
+- Protection against basic SQL injection
+- Generic login failure messages
+- SQLite database for storing test credentials
+- Separate security testing script
+
+9. FILES IN THE PROJECT
+
+insecure_code.py
+secure_code.py
+setup_database.py
+security_tests.py
+users.db
+security_report.txt
+
+10. CONCLUSION
+
+The security enhancement task successfully identified and addressed the SQL injection vulnerability in the original login application. Parameterized SQL queries were implemented to separate user input from SQL commands. Multiple authentication tests were performed, including valid credentials, an incorrect password, an incorrect username, and an SQL injection-style input. All tests produced the expected results. The final application provides improved protection against SQL injection while maintaining the original login functionality.
